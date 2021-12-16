@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .users import UserRegisterForm, UserUpdateForm, ProfileUpdateFrom
-
+from sorl.thumbnail import delete
 
 def register(request):
     if request.method == 'POST':
@@ -11,11 +11,11 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(
-                request, f'Your account has been created! You are now able to log in')
+                request, f'Your account has been created! You are now able to log in {username}')
             return redirect('login')
     else:
         form = UserRegisterForm()
-    return render(request, 'users/register.htm', {'form': form})
+    return render(request, 'users/register.html', {'form': form})
 
 
 @login_required
@@ -37,6 +37,7 @@ def profile(request):
 
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'del_form':delete(p_form)
     }
-    return render(request, 'users/profile.htm', context)
+    return render(request, 'users/profile.html', context)
